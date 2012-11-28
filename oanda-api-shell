@@ -1,0 +1,143 @@
+#!/bin/bash
+
+## config
+URL="http://api-sandbox.oanda.com"
+CURL="curl -k -s -S "
+
+## non-config
+RESTHOST=$(echo ${URL} | sed -e 's%^.*/%%' -e 's/:.*//')
+
+help ()
+{
+echo Available Commands
+echo
+echo " accounts - get a list of accounts"
+echo " account <account_id> - set active account id"
+echo " trades - get a list of accounts"
+echo " logout - log out of user (must login again)"
+echo " exit - quit the program without logging out"
+echo " quit - logout and quit the program"
+}
+
+if [ "$1" = "--help" ]; then
+  echo "Usage:"
+  echo "  $0 [username] [command]"
+  echo ""
+  help
+  exit 0
+fi
+
+USERNAME=$1
+shift
+if [ "$1" != "" ]; then
+  COMMAND=$*
+fi
+
+urlize()
+{
+  perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$1"
+}
+
+login()
+{
+USERNAME="$1"
+PASS="$2"
+
+if [ "${USERNAME}" = "" ]; then
+   echo -n "Username: "
+   read USERNAME
+else
+   echo "Logging in as ${USERNAME}"
+fi
+
+## Authentication not yet implemented
+# if [ "${PASS}" = "" ]; then
+#  PASS=$(cat ~/.${RESTHOST}-password 2>/dev/null)
+#  if [ "${PASS}" = "" ]; then
+#      echo "Unable to load password from ~/.${RESTHOST}-password"
+#      echo -n "Password: "
+#      stty -echo
+#      read PASS
+#      stty echo
+#      echo
+#   fi
+#fi
+
+
+LOGGED_IN_USER="${USERNAME}"
+}
+
+decho ()
+{
+if [ X"$DEBUG" != "X" ]; then
+  echo "[DEBUG] $1"
+fi
+}
+
+jecho ()
+{
+echo "$1" | sed -e 's/},{/},\n{/g' -e 's/\[{/\[\n{/g' -e 's/}\]/}\n\]/g' -e 's/\],/\],\n/g'
+}
+
+accounts ()
+{
+ACCOUNTS=$(${CURL} "${URL}/users/${USERNAME}/accounts")
+decho "Response: ${ACCOUNTS}"
+jecho "Accounts: ${ACCOUNTS}"
+}
+
+account()
+{
+if [ "$1" = "" ]; then
+   echo "Set active account. Usage: account <account_id>"
+else
+   ACCOUNT="$1"
+fi
+}
+
+trades ()
+{
+if [ "${ACCOUNT}" = "" ]; then
+   echo "Account unset.  Set an account with, eg: account 6531071"
+else
+   TRADES=$(${CURL} "${URL}/accounts/${ACCOUNT}/trades")
+   decho "Response: ${TRADES}"
+   jecho "Accounts: ${TRADES}"
+fi
+}
+
+logout ()
+{
+  logout_from_server
+  login
+}
+
+logout_from_server ()
+{
+if [ "${LOGGED_IN_USER}" != "" ]; then
+  echo -n Logging out...
+#  LOGOUT_RESPONSE=$(${CURL} "${LOGOUT_URL}")
+  echo " done!"
+  LOGGED_IN_USER=""
+  ACCOUNT=""
+fi
+}
+
+if [ "$COMMAND" != "" ]; then
+  $COMMAND
+else
+  help
+  login ${USERNAME} ${PASS}
+  while [ "$COMMAND" != "quit" ]; do
+    read -ep "${LOGGED_IN_USER}:${ACCOUNT}> " COMMAND
+    history -s "$COMMAND"
+    if [ "$COMMAND" = "?" ]; then
+      COMMAND=help
+    fi
+    if [ "$COMMAND" != "quit" ]; then
+      $COMMAND
+    fi
+  done
+fi
+logout_from_server
+
