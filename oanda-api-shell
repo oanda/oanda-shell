@@ -14,6 +14,9 @@ echo
 echo " accounts - get a list of accounts"
 echo " account <account_id> - set active account id"
 echo " trades - get a list of accounts"
+echo ""
+echo " rate <instrument> - show the current rate for the provided instrument"
+echo ""
 echo " logout - log out of user (must login again)"
 echo " exit - quit the program without logging out"
 echo " quit - logout and quit the program"
@@ -104,6 +107,22 @@ else
    decho "Response: ${TRADES}"
    jecho "Accounts: ${TRADES}"
 fi
+}
+
+rate()
+{
+INSTRUMENT="$1"
+if [ "${INSTRUMENT}" = "" ]; then
+  echo "Usage: rate <instrument>"
+  echo ""
+  echo "eg. rate EUR/USD"
+else
+  CONVERTED_INSTRUMENT=$(echo "${INSTRUMENT}" | sed -e 's%/%_%')
+  RATE_REQ="${URL}/v1/instruments/${CONVERTED_INSTRUMENT}/price"
+  RATE_RESP=$(${CURL} "${RATE_REQ}")
+  jecho "Rate: ${RATE_RESP}"
+fi
+
 }
 
 logout ()
