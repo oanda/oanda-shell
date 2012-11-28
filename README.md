@@ -8,6 +8,9 @@ Supported commands:
 * accounts - get a list of accounts
 * account - set active account
 * trades - get a list of accounts
+* trade new - create a new trade
+* trade get - show trade information
+
 * rate - show the current rate for a provided instrument
 
 **Note**: At startup a username is required to access the list of accounts, etc.  For that, you may be able to use "testusr" (until user registration is supported).
