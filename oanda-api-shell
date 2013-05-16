@@ -11,7 +11,6 @@ help ()
 {
 echo Available Commands
 echo
-echo " accounts - get a list of accounts"
 echo " account <account_id> - set active account id"
 echo ""
 echo " trades - get a list of accounts"
@@ -85,12 +84,13 @@ jecho ()
 echo "$1" | sed -e 's/},{/},\n{/g' -e 's/\[{/\[\n{/g' -e 's/}\]/}\n\]/g' -e 's/\],/\],\n/g'
 }
 
-accounts ()
-{
-ACCOUNTS=$(${CURL} "${URL}/users/${USERNAME}/accounts")
-decho "Response: ${ACCOUNTS}"
-jecho "Accounts: ${ACCOUNTS}"
-}
+# Not implemented in API.
+#accounts ()
+#{
+#ACCOUNTS=$(${CURL} "${URL}/users/${USERNAME}/accounts")
+#decho "Response: ${ACCOUNTS}"
+#jecho "Accounts: ${ACCOUNTS}"
+#}
 
 account()
 {
@@ -106,7 +106,7 @@ trades ()
 if [ "${ACCOUNT}" = "" ]; then
    echo "Account unset.  Set an account with, eg: account 6531071"
 else
-   TRADES=$(${CURL} "${URL}/accounts/${ACCOUNT}/trades")
+   TRADES=$(${CURL} "${URL}/v1/accounts/${ACCOUNT}/trades")
    decho "Response: ${TRADES}"
    jecho "Accounts: ${TRADES}"
 fi
@@ -116,15 +116,15 @@ trade_new()
 {
 INSTRUMENT=$1
 UNITS=$2
-DIRECTION=$3
-if [ "${INSTRUMENT}" = "" -o "${UNITS}" = "" -o "${DIRECTION}" = "" ]; then
+SIDE=$3
+if [ "${INSTRUMENT}" = "" -o "${UNITS}" = "" -o "${SIDE}" = "" ]; then
   echo "Usage:"
-  echo "  trade new <instrument> <units> <direction>"
+  echo "  trade new <instrument> <units> <side>"
   echo ""
   echo "e.g.:"
   echo "  trade new EUR/USD 2 short"
 else
-  TRADE_REQ="instrument=${INSTRUMENT}&units=${UNITS}&direction=${DIRECTION}"
+  TRADE_REQ="instrument=${INSTRUMENT}&units=${UNITS}&side=${SIDE}"
   TRADE_RESP=$(${CURL} -X POST -d "${TRADE_REQ}" "${URL}/v1/accounts/${ACCOUNT}/trades")
   jecho "Response: ${TRADE_RESP}"
 fi
