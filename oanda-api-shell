@@ -122,7 +122,7 @@ if [ "${INSTRUMENT}" = "" -o "${UNITS}" = "" -o "${SIDE}" = "" ]; then
   echo "  trade new <instrument> <units> <side>"
   echo ""
   echo "e.g.:"
-  echo "  trade new EUR/USD 2 short"
+  echo "  trade new EUR_USD 2 short"
 else
   TRADE_REQ="instrument=${INSTRUMENT}&units=${UNITS}&side=${SIDE}"
   TRADE_RESP=$(${CURL} -X POST -d "${TRADE_REQ}" "${URL}/v1/accounts/${ACCOUNT}/trades")
@@ -138,7 +138,7 @@ if [ "${TRADE_ID}" = "" ]; then
   echo "Usage:"
   echo "  trade get <trade_id>"
 else
-  TRADE_REQ="${URL}/v1/accounts/${ACCOUNT}/trade/${TRADE_ID}"
+  TRADE_REQ="${URL}/v1/accounts/${ACCOUNT}/trades/${TRADE_ID}"
   TRADE_RESP=$(${CURL} ${TRADE_REQ})
   jecho "Response: ${TRADE_RESP}"
 fi
@@ -164,7 +164,7 @@ INSTRUMENT="$1"
 if [ "${INSTRUMENT}" = "" ]; then
   echo "Usage: rate <instrument>"
   echo ""
-  echo "eg. rate EUR/USD"
+  echo "eg. rate EUR_USD"
 else
   CONVERTED_INSTRUMENT=$(echo "${INSTRUMENT}" | sed -e 's%/%_%')
   RATE_REQ="${URL}/v1/instruments/${CONVERTED_INSTRUMENT}/price"
