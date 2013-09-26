@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## config
-URL="http://api-sandbox.oanda.com"
+URL="http://max:1343"
 CURL="curl -k -s -S "
 
 ## non-config
@@ -167,7 +167,7 @@ if [ "${INSTRUMENT}" = "" ]; then
   echo "eg. rate EUR_USD"
 else
   CONVERTED_INSTRUMENT=$(echo "${INSTRUMENT}" | sed -e 's%/%_%')
-  RATE_REQ="${URL}/v1/instruments/${CONVERTED_INSTRUMENT}/price"
+  RATE_REQ="${URL}/v1/quote?instruments=${CONVERTED_INSTRUMENT}"
   RATE_RESP=$(${CURL} "${RATE_REQ}")
   jecho "Rate: ${RATE_RESP}"
 fi
