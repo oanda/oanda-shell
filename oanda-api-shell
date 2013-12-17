@@ -14,7 +14,7 @@ echo
 echo " account <account_id> - set active account id"
 echo ""
 echo " trades - get a list of accounts"
-echo " trade new <instrument> <units> <direction> - create a new market order"
+echo " marketOrder new <instrument> <units> <direction> - create a new market order"
 echo " trade get <trade_id> - show trade information"
 echo ""
 echo " rate <instrument> - show the current rate for the provided instrument"
@@ -112,17 +112,17 @@ else
 fi
 }
 
-trade_new()
+marketOrder_new()
 {
 INSTRUMENT=$1
 UNITS=$2
 SIDE=$3
 if [ "${INSTRUMENT}" = "" -o "${UNITS}" = "" -o "${SIDE}" = "" ]; then
   echo "Usage:"
-  echo "  trade new <instrument> <units> <side>"
+  echo "  marketOrder new <instrument> <units> <side>"
   echo ""
   echo "e.g.:"
-  echo "  trade new EUR_USD 2 short"
+  echo "  marketOrder new EUR_USD 2 short"
 else
   TRADE_REQ="instrument=${INSTRUMENT}&units=${UNITS}&side=${SIDE}&type=market"
   TRADE_RESP=$(${CURL} -X POST -d "${TRADE_REQ}" "${URL}/v1/accounts/${ACCOUNT}/orders")
@@ -146,15 +146,21 @@ fi
 
 trade()
 {
-if [ "$1" = "new" ]; then
-  shift
-  trade_new $*
-elif [ "$1" = "get" ]; then
+if [ "$1" = "get" ]; then
   shift
   trade_get $*
 else
-  echo "  new - create a new trade"
   echo "  get - get details of an existing trade"
+fi
+}
+
+marketOrder()
+{
+if [ "$1" = "new" ]; then
+  shift
+  marketOrder_new $*
+else
+  echo "  new - create a new marketOrder"
 fi
 }
 
