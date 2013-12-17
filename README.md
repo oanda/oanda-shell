@@ -8,7 +8,7 @@ Supported commands:
 * accounts - get a list of accounts
 * account - set active account
 * trades - get a list of accounts
-* trade new - create a new trade
+* trade new - create a new market order
 * trade get - show trade information
 
 * rate - show the current rate for a provided instrument
