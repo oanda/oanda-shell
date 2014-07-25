@@ -13,7 +13,8 @@ echo Available Commands
 echo
 echo " account <account_id> - set active account id"
 echo ""
-echo " trades - get a list of accounts"
+echo " accounts - get a list of accounts for the username"
+echo " trades - get a list of trades"
 echo " marketOrder new <instrument> <units> <direction> - create a new market order"
 echo " trade get <trade_id> - show trade information"
 echo ""
@@ -84,13 +85,12 @@ jecho ()
 echo "$1" | sed -e 's/},{/},\n{/g' -e 's/\[{/\[\n{/g' -e 's/}\]/}\n\]/g' -e 's/\],/\],\n/g'
 }
 
-# Not implemented in API.
-#accounts ()
-#{
-#ACCOUNTS=$(${CURL} "${URL}/users/${USERNAME}/accounts")
-#decho "Response: ${ACCOUNTS}"
-#jecho "Accounts: ${ACCOUNTS}"
-#}
+accounts ()
+{
+ACCOUNTS=$(${CURL} "${URL}/v1/accounts?username=${USERNAME}")
+decho "Response: ${ACCOUNTS}"
+jecho "Accounts: ${ACCOUNTS}"
+}
 
 account()
 {
